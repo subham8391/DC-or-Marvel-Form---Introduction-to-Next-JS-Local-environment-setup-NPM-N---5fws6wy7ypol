@@ -1,23 +1,42 @@
-'use client'
-import React, { useEffect, useState } from "react";
-import FormA from "./FormA";
-import FormB from "./FormB";
-import Summary from "./Summary";
+'use client';
+import React, { useEffect, useState } from 'react';
+import FormA from './FormA';
+import FormB from './FormB';
+import Summary from './Summary';
 
 const App = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
-  const [age, setAge] = useState("");
+  const [age, setAge] = useState('');
+
+  const handleAgeChange = (event) => {
+    setAge(event.target.value);
+  };
+
+  const handleFormSubmit = (data) => {
+    setFormData(data);
+  };
+
+  useEffect(() => {
+    if (formData.marvelShows || formData.dcShows) {
+      console.log(formData);
+      setStep(4);
+    }
+  }, [formData]);
+  const handleSummaryReset = () => {
+    setStep(1);
+    setFormData({});
+    setAge('');
+  };
 
   return (
     <div>
       {(step === 1 || !age) && (
-        <div id="start-page">
-
+        <div id='start-page'>
           <h1>Step 1: Select Form Type and Enter Age</h1>
           <label>
             Enter your age:
-            <input value={age} />
+            <input type='number' value={age} onChange={handleAgeChange} />
           </label>
           <br />
           <label>
@@ -29,32 +48,34 @@ const App = () => {
             </select>
           </label>
           <br />
-
-
         </div>
       )}
-      {step === 2 && (
+      {step === 2 && age && (
         <div>
-          <FormA age={age} />
+          <FormA onSubmit={handleFormSubmit} age={age} />
         </div>
       )}
-      {step === 3 && (
+      {step === 3 && age && (
         <div>
-          <FormB age={age} />
+          <FormB onSubmit={handleFormSubmit} age={age} />
         </div>
       )}
       {(step === 2 || step === 3) && age ? (
-        <button id="go-back" onClick={() => setStep(1)}>Go Back</button>
+        <button id='go-back' onClick={() => setStep(1)}>
+          Go Back
+        </button>
       ) : null}
 
       {step === 4 && (
         <div>
-          <Summary />
-          <button id="start-over">Start Over</button>
+          <Summary formData={formData} />
+          <button id='start-over' onClick={handleSummaryReset}>
+            Start Over
+          </button>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default App;
